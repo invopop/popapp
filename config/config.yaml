@@ -1,0 +1,21 @@
+log:
+  level: "{{ or .LOG_LEVEL `debug` }}"
+  # prettier-ignore
+  console: {{ or .LOG_CONSOLE `true` }}
+
+name: "popapp"
+public_base_url: "{{ or .PUBLIC_BASE_URL `https://popapp.invopop.dev` }}"
+
+invopop:
+  base_url: "{{ or .INVOPOP_BASE_URL `http://api` }}"
+  client_id: "{{ or .INVOPOP_CLIENT_ID `` }}"
+  client_secret: "{{ or .INVOPOP_CLIENT_SECRET `` }}"
+
+nats:
+  url: "{{ or .NATS_URL `nats://nats:4222` }}"
+  creds: "{{ or .NATS_CREDENTIALS `` }}"
+  tls:
+    server_name: "{{ or .NATS_SERVER_NAME `nats` }}"
+    cert: "{{ or .NATS_TLS_CERT `` }}"
+    key: "{{ or .NATS_TLS_KEY `` }}"
+    ca: "{{ or .NATS_TLS_CA `` }}"
