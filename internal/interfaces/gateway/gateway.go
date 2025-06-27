@@ -11,6 +11,14 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// ABOUT: The gateway is responsible for handling incoming tasks.
+// These tasks are then executed by the TaskHandler.
+// To define new actions, edit the executeAction function.
+// You will also need to add the corresponding handles for each action.
+// These handlers should be very simple and should not perform any complex logic.
+// They should only call the appropriate domain methods and translate errors.
+// Domain services may be added to the service struct.
+
 const queueTime = 24 * time.Hour
 
 // Service encapsulates the gateway functionality.

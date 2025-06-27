@@ -4,44 +4,19 @@ package main
 import (
 	"context"
 
-	"github.com/invopop/client.go/invopop"
 	"github.com/invopop/client.go/pkg/runner"
-	"github.com/invopop/popapp/internal/config"
-	"github.com/invopop/popapp/internal/domain"
-	"github.com/invopop/popapp/internal/interfaces/gateway"
-	"github.com/invopop/popapp/internal/interfaces/web"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
+// ABOUT: The main function initializes the application.
+// It starts the web server and the gateway service.
+// This is done using a command-line interface.
+
 const (
-	configPath = "./config/config.yaml"
+	configPath     = "./config/config.yaml"
+	defaultWebPort = "8080"
 )
-
-// App keeps the main application logic in one place.
-type App struct {
-	conf   *config.Config
-	ic     *invopop.Client
-	web    *web.Service
-	gw     *gateway.Service
-	domain *domain.Setup
-}
-
-func newApp(configPath string) *App {
-	app := new(App)
-	app.conf = config.NewConfig(configPath)
-
-	app.ic = invopop.New(
-		invopop.WithConfig(app.conf.Invopop),
-	)
-
-	app.domain = domain.New()
-
-	app.gw = gateway.New(app.conf.Config, app.domain)
-	app.web = web.New(app.domain)
-
-	return app
-}
 
 func main() {
 	a := newApp(configPath)
@@ -64,10 +39,6 @@ func main() {
 
 	log.Info().Msg("process terminated")
 }
-
-const (
-	defaultWebPort = "8080"
-)
 
 // Serve starts the main service.
 func (app *App) serve(ctx context.Context) error {

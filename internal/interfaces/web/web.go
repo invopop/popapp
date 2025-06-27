@@ -14,6 +14,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// ABOUT: The web service uses an echo server under the hood.
+// It lets you define routes and controllers for the application.
+// The controller is only responsible for parsing the request and calling the appropriate domain method.
+// Once this is done, the controller should return the correct response.
+// Controllers should be added to the service struct and initialized during the serve call.
+// Each controller struct should contain the necessary domain structs.
+
 // Service holds together the web service.
 type Service struct {
 	echo *echopop.Service

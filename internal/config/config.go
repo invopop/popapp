@@ -8,6 +8,9 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// ABOUT: Any new configuration that you add to the application should be added here.
+// Remember to match the name with the name in config.yaml.
+
 // Config is the configuration for the application.
 type Config struct {
 	*gateway.Config

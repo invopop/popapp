@@ -5,7 +5,10 @@ import (
 	"embed"
 )
 
-// TODO: remove // bellow in case of scripts
+// ABOUT: This embeds the files directly into the binary during compilation.
+// If you need to add any scripts you can do so by adding them to the scripts directory.
+// Remember to uncomment the embed directive below when adding new files.
+
 // //go:embed scripts/*
 
 // Content holds the embedded assets.

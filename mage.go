@@ -12,6 +12,11 @@ import (
 	"github.com/magefile/mage/target"
 )
 
+// ABOUT: This file contains the mage build system for the popapp service.
+// It provides a set of tasks for building, running, and releasing the service.
+// For local development you may want to use air to automatically rebuild and restart the service.
+// air will automatically call `mage serve` when changes are detected.
+
 const (
 	name     = "popapp"
 	runImage = "golang:1.24.4-alpine"

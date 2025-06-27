@@ -1,4 +1,3 @@
-
 ## Compile the Go binary
 FROM golang:1.24.4-alpine AS build-go
 

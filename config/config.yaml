@@ -1,3 +1,8 @@
+#########
+# This file contains the configuration for the application.
+# You should add any configuration options here.
+# The client ID and secret are created when you register your application with Invopop.
+
 log:
   level: "{{ or .LOG_LEVEL `debug` }}"
   # prettier-ignore

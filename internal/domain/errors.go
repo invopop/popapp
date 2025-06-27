@@ -5,6 +5,12 @@ import (
 	"fmt"
 )
 
+// The domain.Error struct represents an error that occurred within the domain.
+// It is used to provide a standardized error structure for the domain layer.
+// These errors can then be used by interfaces to understand the nature of the error
+// and produce a meaningful response to the user.
+// These are specially helpful for the gateway interface.
+
 // Error contains the standard error definition for this domain.
 type Error struct {
 	errorType string
