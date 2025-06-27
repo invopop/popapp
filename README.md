@@ -230,6 +230,52 @@ docker run --rm --name popapp \
   /src/popapp serve
 ```
 
+s## ⚙️ GitHub Workflows
+
+This template includes three GitHub Actions workflows to automate testing, linting, and deployment:
+
+### 🧪 Test Workflow (`test.yaml`)
+
+**Triggers**: Push to main, tags (v*), and pull requests
+
+**What it does**:
+- Sets up Go environment using the version from `go.mod`
+- Configures authentication for private Invopop dependencies
+- Downloads all Go modules
+- Runs unit tests with race detection: `go test -tags unit -race ./...`
+- Builds the application to verify compilation
+
+**Required Secrets**:
+- `GO_MOD_USER`: GitHub username for accessing private repositories
+- `GO_MOD_PASS`: GitHub token/password for private repository access
+
+### 🔍 Lint Workflow (`lint.yaml`)
+
+**Triggers**: Push to main, tags (v*), and pull requests
+
+**What it does**:
+- Sets up Go environment
+- Configures authentication for private dependencies
+- Runs `golangci-lint` to check code quality and style
+- Ensures code follows Go best practices
+
+### 🚀 Release Workflow (`release.yaml`) - **COMMENTED OUT**
+
+**⚠️ Important**: The release workflow is currently commented out.
+
+**Triggers** (when enabled): Push to main branch and tags
+
+**What it does**:
+- **Auto-tagging**: Automatically creates semantic version tags on main branch pushes
+- **Docker Build**: Builds Docker images with proper versioning
+- **Registry Push**: Pushes images to Google Cloud Artifact Registry
+- **Multi-tag Support**: Creates `latest`, versioned, and timestamped tags
+
+**Registry Configuration**:
+- **Registry**: `europe-docker.pkg.dev`
+- **Repository Path**: `invopop/apps`
+- **Image Naming**: `{repository-name}:{version}`
+
 ## 📚 Additional Resources
 
 - [Invopop Documentation](https://docs.invopop.com/)
