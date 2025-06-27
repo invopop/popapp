@@ -259,23 +259,6 @@ This template includes three GitHub Actions workflows to automate testing, linti
 - Runs `golangci-lint` to check code quality and style
 - Ensures code follows Go best practices
 
-### 🚀 Release Workflow (`release.yaml`) - **COMMENTED OUT**
-
-**⚠️ Important**: The release workflow is currently commented out.
-
-**Triggers** (when enabled): Push to main branch and tags
-
-**What it does**:
-- **Auto-tagging**: Automatically creates semantic version tags on main branch pushes
-- **Docker Build**: Builds Docker images with proper versioning
-- **Registry Push**: Pushes images to Google Cloud Artifact Registry
-- **Multi-tag Support**: Creates `latest`, versioned, and timestamped tags
-
-**Registry Configuration**:
-- **Registry**: `europe-docker.pkg.dev`
-- **Repository Path**: `invopop/apps`
-- **Image Naming**: `{repository-name}:{version}`
-
 ## 📚 Additional Resources
 
 - [Invopop Documentation](https://docs.invopop.com/)
