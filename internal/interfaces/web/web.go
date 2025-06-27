@@ -57,7 +57,7 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // render provides a wrapper around the component to make it nice to render.
-func render(c echo.Context, status int, t templ.Component) error { //nolint:unparam
+func render(c echo.Context, status int, t templ.Component) error { //nolint:unparam,unused
 	c.Response().Writer.WriteHeader(status)
 
 	if err := t.Render(c.Request().Context(), c.Response().Writer); err != nil {
@@ -66,15 +66,15 @@ func render(c echo.Context, status int, t templ.Component) error { //nolint:unpa
 	return nil
 }
 
-func clientError(format string, a ...any) error {
+func clientError(format string, a ...any) error { //nolint:unused
 	return httpError(http.StatusBadRequest, format, a...)
 }
 
-func serverError(format string, a ...any) error {
+func serverError(format string, a ...any) error { //nolint:unused
 	return httpError(http.StatusInternalServerError, format, a...)
 }
 
-func httpError(code int, format string, a ...any) error {
+func httpError(code int, format string, a ...any) error { //nolint:unused
 	err := fmt.Errorf(format, a...)
 	return echo.NewHTTPError(code, echo.Map{"error": err.Error()})
 }

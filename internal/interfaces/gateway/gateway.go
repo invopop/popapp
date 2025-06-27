@@ -19,7 +19,7 @@ import (
 // They should only call the appropriate domain methods and translate errors.
 // Domain services may be added to the service struct.
 
-const queueTime = 24 * time.Hour
+const queueTime = 24 * time.Hour //nolint:unused
 
 // Service encapsulates the gateway functionality.
 type Service struct {
@@ -69,7 +69,7 @@ func (s *Service) executeAction(ctx context.Context, in *gateway.Task) *gateway.
 	}
 }
 
-func mapDomainError(ref string, err error) *gateway.TaskResult {
+func mapDomainError(ref string, err error) *gateway.TaskResult { //nolint:unused
 	var e *domain.Error
 	if errors.As(err, &e) {
 		out := new(gateway.TaskResult)
