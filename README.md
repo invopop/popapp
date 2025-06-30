@@ -83,18 +83,13 @@ cd my-new-app
 go mod edit -module github.com/yourorg/my-new-app
 
 # Download dependencies
+go get -u
 go mod tidy
 ```
 
+Remember to replace `popapp` with your app name all through the codebase, including in `config.yaml`, `mage.go`, and `Dockerfile`.
+
 ### 2. Configuration
-
-Copy and customize the configuration:
-
-```bash
-# Edit the configuration file
-cp config/config.yaml config/config.local.yaml
-# Edit config/config.local.yaml with your settings
-```
 
 Key configuration options:
 - `invopop.client_id` and `invopop.client_secret`: Your Invopop app credentials
