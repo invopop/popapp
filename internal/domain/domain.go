@@ -12,8 +12,10 @@ package domain
 // This method should have a corresponding struct for the request.
 // In this case, the method may return an Invoice from the model or an InvoiceResponse struct.
 
+// Setup holds all the domain configuration and instances
 type Setup struct{}
 
+// New creates a new domain setup
 func New() *Setup {
 	return &Setup{}
 }

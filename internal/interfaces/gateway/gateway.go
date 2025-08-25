@@ -27,7 +27,8 @@ type Service struct {
 }
 
 // New prepares the gateway to be able to start.
-func New(conf *gateway.Config, domain *domain.Setup) *Service {
+// The domain Setup is needed to intialize the domain services required
+func New(conf *gateway.Config, _ *domain.Setup) *Service {
 	s := new(Service)
 	s.gw = gateway.New(
 		gateway.WithConfig(conf),
@@ -62,7 +63,7 @@ func (s *Service) execute(ctx context.Context, in *gateway.Task) *gateway.TaskRe
 	return res
 }
 
-func (s *Service) executeAction(ctx context.Context, in *gateway.Task) *gateway.TaskResult {
+func (s *Service) executeAction(_ context.Context, in *gateway.Task) *gateway.TaskResult { //nolint:unused
 	switch in.Action {
 	default:
 		return gateway.TaskKO(errors.New("unknown action"))
