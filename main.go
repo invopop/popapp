@@ -24,8 +24,8 @@ func main() {
 	cmdServe := &cobra.Command{
 		Use:   "serve",
 		Short: "Start the service",
-		Run: func(cmd *cobra.Command, _ []string) {
-			if err := a.serve(cmd.Context()); err != nil {
+		Run: func(_ *cobra.Command, _ []string) {
+			if err := a.serve(); err != nil {
 				log.Fatal().Err(err).Msg("starting the service")
 			}
 		},
@@ -41,7 +41,7 @@ func main() {
 }
 
 // Serve starts the main service.
-func (app *App) serve(ctx context.Context) error {
+func (app *App) serve() error {
 	run := new(runner.Group)
 
 	run.Start(func(_ context.Context) error {

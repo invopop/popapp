@@ -27,7 +27,8 @@ type Service struct {
 }
 
 // New instantiates a new web service.
-func New(domain *domain.Setup) *Service {
+// The domain Setup is needed to intialize the domain services required
+func New(_ *domain.Setup) *Service {
 	s := new(Service)
 
 	s.echo = echopop.NewService()
