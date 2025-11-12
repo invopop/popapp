@@ -4,7 +4,12 @@ package main
 import (
 	"context"
 
+	"github.com/invopop/client.go/invopop"
 	"github.com/invopop/client.go/pkg/runner"
+	"github.com/invopop/popapp/internal/config"
+	"github.com/invopop/popapp/internal/domain"
+	"github.com/invopop/popapp/internal/interfaces/gateway"
+	"github.com/invopop/popapp/internal/interfaces/web"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -18,30 +23,61 @@ const (
 	defaultWebPort = "8080"
 )
 
+// ABOUT: The app structure is used to encapsulate all the components of the application.
+// It provides a convenient way to access and manage these components.
+// Any new domain config that is needed should be passed from the config object to the domain here.
+
+// App keeps the main application logic in one place.
+type App struct {
+	config *config.Config
+	ic     *invopop.Client
+	web    *web.Service
+	gw     *gateway.Service
+	domain *domain.Setup
+}
+
 func main() {
-	a := newApp(configPath)
+	app := new(App)
+	// Here initialize the app components
+	app.config = config.NewConfig(configPath)
+	app.ic = invopop.New(
+		invopop.WithConfig(app.config.Invopop),
+	)
 
-	cmdServe := &cobra.Command{
-		Use:   "serve",
-		Short: "Start the service",
-		Run: func(_ *cobra.Command, _ []string) {
-			if err := a.serve(); err != nil {
-				log.Fatal().Err(err).Msg("starting the service")
-			}
-		},
-	}
+	app.domain = domain.New() // pass as arguments the elements needed for the domain
 
-	root := &cobra.Command{Use: a.conf.Name}
-	root.AddCommand(cmdServe)
-	if err := root.Execute(); err != nil {
+	app.gw = gateway.New(app.config.Config, app.domain)
+
+	app.run()
+}
+
+func (app *App) run() {
+	cmd := app.root()
+	if err := cmd.Execute(); err != nil {
 		log.Fatal().Err(err).Msg("exiting")
 	}
-
 	log.Info().Msg("process terminated")
 }
 
-// Serve starts the main service.
-func (app *App) serve() error {
+func (app *App) root() *cobra.Command {
+	root := &cobra.Command{Use: app.config.Name}
+
+	root.AddCommand(&cobra.Command{
+		Use:   "serve",
+		Short: "Start accepting tasks and serving HTML assets",
+		Long:  "",
+		Args:  nil,
+		Run: func(_ *cobra.Command, _ []string) {
+			app.serve()
+		},
+	})
+
+	return root
+}
+
+func (app *App) serve() {
+	app.web = web.New(app.domain)
+
 	run := new(runner.Group)
 
 	run.Start(func(_ context.Context) error {
@@ -50,7 +86,6 @@ func (app *App) serve() error {
 	run.Start(func(_ context.Context) error {
 		return app.gw.Start()
 	})
-
 	run.Stop(func(ctx context.Context) error {
 		return app.web.Stop(ctx)
 	})
@@ -59,5 +94,7 @@ func (app *App) serve() error {
 		return nil
 	})
 
-	return run.Wait()
+	if err := run.Wait(); err != nil {
+		log.Error().Err(err).Msg("shutting down")
+	}
 }
