@@ -34,6 +34,7 @@ type App struct {
 // New instantiates a new App.
 func New(conf *config.Config) *App {
 	app := new(App)
+	app.conf = conf
 	app.ic = invopop.New(
 		invopop.WithConfig(app.conf.Invopop),
 	)
