@@ -9,6 +9,7 @@ import (
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/magefile/mage/target"
+	"golang.org/x/term"
 )
 
 // ABOUT: This file contains the mage build system for the popapp service.
@@ -70,7 +71,9 @@ func dockerCmdPrep(name, publicPort string, cmd ...string) (string, []string) {
 		"--network", "invopop-local",
 		"-v", "$PWD:/src",
 		"-w", "/src",
-		"-it", // interactive
+	}
+	if term.IsTerminal(int(os.Stdin.Fd())) {
+		args = append(args, "-it")
 	}
 	if publicPort != "" {
 		args = append(args,
