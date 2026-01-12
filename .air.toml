@@ -1,20 +1,19 @@
+# Currently testing...
 root = "."
 testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-args_bin = ["-v", "serve"]
-bin = "popapp"
-full_bin = "mage"
-cmd = "/usr/bin/true"
+cmd = "/usr/bin/true" # Build not required
+entrypoint = ["mage", "-v", "serve"]
 delay = 1000
-exclude_dir = ["repo", "run", "tmp", "vendor", "testdata"]
-exclude_file = ["mage", "popapp", "mage_output_file.go"]
+exclude_file = ["popapp", "mage", "mage_output_file.go"]
+exclude_dir = ["tmp", "vendor", "testdata"]
 exclude_regex = ["_test.go", "_templ.go"]
 exclude_unchanged = false
 follow_symlink = false
 include_dir = []
-include_ext = ["go", "tpl", "templ", "js", "css", "tmpl", "html"]
+include_ext = ["go", "tpl", "templ", "css", "tmpl", "html", "js"]
 include_file = []
 log = "build-errors.log"
 poll = false

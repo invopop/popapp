@@ -10,7 +10,7 @@ import (
 	"github.com/invopop/client.go/pkg/echopop"
 	"github.com/invopop/popapp/internal/domain"
 	"github.com/invopop/popapp/internal/interfaces/web/assets"
-	popui "github.com/invopop/popui/go"
+	"github.com/invopop/popui.go"
 	"github.com/labstack/echo/v4"
 )
 
