@@ -19,7 +19,7 @@ import (
 
 const (
 	name     = "popapp"
-	runImage = "golang:1.24.4-alpine"
+	runImage = "golang:1.25.0-alpine"
 )
 
 // Build builds the service
