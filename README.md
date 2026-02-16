@@ -36,7 +36,7 @@ Before using this template, ensure you have the following dependencies installed
 
 ### Required Dependencies
 
-1. **Go 1.24.4+**
+1. **Go 1.25.0+**
    ```bash
    # Check your Go version
    go version
@@ -221,7 +221,7 @@ docker run --rm --name popapp \
   --label traefik.http.routers.popapp.rule=Host\`popapp.invopop.dev\` \
   --label traefik.http.routers.popapp.tls=true \
   --expose 8080 \
-  golang:1.24.4-alpine \
+  golang:1.25.0-alpine \
   /src/popapp serve
 ```
 
