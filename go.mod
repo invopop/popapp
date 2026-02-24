@@ -1,4 +1,4 @@
-module github.com/invopop/popapp
+module github.com/invopop/cron
 
 go 1.25.0
 
@@ -8,7 +8,7 @@ require (
 	github.com/invopop/configure v0.8.0
 	github.com/invopop/popui.go v0.15.0
 	github.com/invopop/tasks v0.1.0
-	github.com/labstack/echo/v4 v4.15.0
+	github.com/labstack/echo/v4 v4.15.1
 	github.com/magefile/mage v1.15.0
 	github.com/rs/zerolog v1.34.0
 	github.com/spf13/cobra v1.10.2
@@ -30,7 +30,7 @@ require (
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gorilla/sessions v1.4.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/invopop/gobl v0.307.0 // indirect
+	github.com/invopop/gobl v0.308.0 // indirect
 	github.com/invopop/jsonschema v0.13.0 // indirect
 	github.com/invopop/validation v0.8.0 // indirect
 	github.com/invopop/yaml v0.3.1 // indirect
@@ -42,7 +42,7 @@ require (
 	github.com/mailru/easyjson v0.9.1 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/nats-io/nats.go v1.48.0 // indirect
+	github.com/nats-io/nats.go v1.49.0 // indirect
 	github.com/nats-io/nkeys v0.4.15 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect

@@ -2,7 +2,7 @@
 package main
 
 import (
-	"github.com/invopop/popapp/internal/config"
+	"github.com/invopop/cron/internal/config"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )

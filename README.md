@@ -1,6 +1,6 @@
-# Invopop App Template
+# Cron App
 
-This is a template repository for building Invopop applications using Go. It provides a clean, modular architecture with web and gateway interfaces, making it easy to create new services that integrate with the Invopop ecosystem.
+The Cron app provides periodic workflow execution capabilities for Invopop. Users subscribe silo entries to workflows with a specified interval, and Cron handles the scheduling and execution.
 
 ## 🏗️ Architecture Overview
 
@@ -11,15 +11,15 @@ app/
 ├── cmd/                    # Application entry points
 ├── config/                 # Configuration files
 ├── internal/               # Private application code
-│   ├── config/            # Configuration management
-│   ├── domain/            # Business logic layer
-│   │   └── models/        # Domain models
-│   └── interfaces/        # External interfaces
-│       ├── gateway/       # NATS gateway for async tasks
-│       └── web/           # HTTP web interface
-│           ├── assets/    # Static assets (embedded)
+│   ├── config/             # Configuration management
+│   ├── domain/             # Business logic layer
+│   │   └── models/         # Domain models
+│   └── interfaces/         # External interfaces
+│       ├── gateway/        # NATS gateway for async tasks
+│       └── web/            # HTTP web interface
+│           ├── assets/     # Static assets (embedded)
 │           └── components/ # Templ components
-└── pkg/                   # Public packages and utilities
+└── pkg/                    # Public packages and utilities
 ```
 
 ### Key Components
@@ -70,35 +70,9 @@ Before using this template, ensure you have the following dependencies installed
 5. **Docker** - For containerized development and deployment
 6. **NATS Server** - For gateway functionality (can run via Docker)
 
-## 🚀 Quick Start
+## 🔧 Development Guide
 
-### 1. Clone and Setup
-
-```bash
-# Clone the template
-git clone https://github.com/invopop/popapp.git my-new-app
-cd my-new-app
-
-# Update the module name in go.mod
-go mod edit -module github.com/yourorg/my-new-app
-
-# Download dependencies
-go get -u
-go mod tidy
-```
-
-Remember to replace `popapp` with your app name all through the codebase, including in `config.yaml`, `mage.go`, and `Dockerfile`.
-
-### 2. Configuration
-
-Key configuration options:
-- `invopop.client_id` and `invopop.client_secret`: Your Invopop app credentials
-- `nats.url`: NATS server connection string
-- `public_base_url`: Your application's public URL
-
-### 3. Development
-
-#### Using Air (Recommended for Development)
+### Using Air (Recommended for Development)
 
 ```bash
 # Start with hot reload
@@ -111,7 +85,7 @@ This will:
 - Restart the server
 - Generate Templ templates
 
-#### Using Mage
+### Using Mage
 
 ```bash
 # Build the application
@@ -124,17 +98,15 @@ mage serve
 mage shell
 ```
 
-#### Direct Go Commands
+### Direct Go Commands
 
 ```bash
 # Generate Templ templates
 templ generate
 
 # Build and run
-go build . && ./popapp serve
+go build . && ./cron serve
 ```
-
-## 🔧 Development Guide
 
 ### Adding New Features
 
@@ -214,15 +186,15 @@ The template includes Docker support for consistent development environments:
 mage serve
 
 # This runs the equivalent of:
-docker run --rm --name popapp \
+docker run --rm --name cron \
   --network invopop-local \
   -v $PWD:/src -w /src \
   --label traefik.enable=true \
-  --label traefik.http.routers.popapp.rule=Host\`popapp.invopop.dev\` \
-  --label traefik.http.routers.popapp.tls=true \
+  --label traefik.http.routers.cron.rule=Host\`cron.invopop.dev\` \
+  --label traefik.http.routers.cron.tls=true \
   --expose 8080 \
   golang:1.25.0-alpine \
-  /src/popapp serve
+  /src/cron serve
 ```
 
 s## ⚙️ GitHub Workflows

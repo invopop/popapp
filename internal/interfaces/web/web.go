@@ -8,8 +8,8 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/invopop/client.go/pkg/echopop"
-	"github.com/invopop/popapp/internal/domain"
-	"github.com/invopop/popapp/internal/interfaces/web/assets"
+	"github.com/invopop/cron/internal/domain"
+	"github.com/invopop/cron/internal/interfaces/web/assets"
 	"github.com/invopop/popui.go"
 	"github.com/labstack/echo/v4"
 )

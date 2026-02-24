@@ -5,10 +5,10 @@ import (
 
 	"github.com/invopop/client.go/invopop"
 	"github.com/invopop/client.go/pkg/runner"
-	"github.com/invopop/popapp/internal/config"
-	"github.com/invopop/popapp/internal/domain"
-	"github.com/invopop/popapp/internal/interfaces/gateway"
-	"github.com/invopop/popapp/internal/interfaces/web"
+	"github.com/invopop/cron/internal/config"
+	"github.com/invopop/cron/internal/domain"
+	"github.com/invopop/cron/internal/interfaces/gateway"
+	"github.com/invopop/cron/internal/interfaces/web"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )

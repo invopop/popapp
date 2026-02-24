@@ -20,7 +20,7 @@ RUN git config --global url."https://${GITHUB_USER}:${GITHUB_PASS}@github.com".i
 RUN go mod download
 
 ADD . /src
-RUN go build -o popapp .
+RUN go build -o cron .
 
 ## Build Final Container
 
@@ -28,12 +28,12 @@ FROM alpine
 RUN apk add --update --no-cache ca-certificates tzdata
 WORKDIR /app
 
-COPY --from=build-go /src/popapp /app/
+COPY --from=build-go /src/cron /app/
 COPY config/config.yaml /app/config/
 
 VOLUME ["/app/config"]
 
 EXPOSE 8080
 
-ENTRYPOINT [ "./popapp" ]
+ENTRYPOINT [ "./cron" ]
 CMD [ "serve" ]

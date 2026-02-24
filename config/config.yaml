@@ -8,13 +8,13 @@ log:
   # prettier-ignore
   console: {{ or .LOG_CONSOLE `true` }}
 
-name: "popapp"
-public_base_url: "{{ or .PUBLIC_BASE_URL `https://popapp.invopop.dev` }}"
+name: "cron"
+public_base_url: "{{ or .PUBLIC_BASE_URL `https://cron.invopop.dev` }}"
 
 invopop:
   base_url: "{{ or .INVOPOP_BASE_URL `http://api` }}"
-  client_id: "{{ or .INVOPOP_CLIENT_ID `` }}"
-  client_secret: "{{ or .INVOPOP_CLIENT_SECRET `` }}"
+  client_id: "{{ or .INVOPOP_CLIENT_ID `GS3aSQOq9p9A3w` }}"
+  client_secret: "{{ or .INVOPOP_CLIENT_SECRET `PEyJTai2f1WL3cDiM4jutLJMYVskP3paIVsYxZuUnEI` }}"
 
 nats:
   url: "{{ or .NATS_URL `nats://nats:4222` }}"

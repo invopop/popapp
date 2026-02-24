@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/invopop/client.go/gateway"
-	"github.com/invopop/popapp/internal/domain"
+	"github.com/invopop/cron/internal/domain"
 	"github.com/rs/zerolog/log"
 )
 

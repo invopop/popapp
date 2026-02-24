@@ -12,13 +12,13 @@ import (
 	"golang.org/x/term"
 )
 
-// ABOUT: This file contains the mage build system for the popapp service.
+// ABOUT: This file contains the mage build system for the cron service.
 // It provides a set of tasks for building, running, and releasing the service.
 // For local development you may want to use air to automatically rebuild and restart the service.
 // air will automatically call `mage serve` when changes are detected.
 
 const (
-	name     = "popapp"
+	name     = "cron"
 	runImage = "golang:1.25.0-alpine"
 )
 
