@@ -18,7 +18,10 @@ invopop:
 
 nats:
   url: "{{ or .NATS_URL `nats://nats:4222` }}"
-  creds: "{{ or .NATS_CREDENTIALS `` }}"
+  creds: |-
+    {{- if .NATS_CREDENTIALS }}
+    {{ indent .NATS_CREDENTIALS 2 }}
+    {{- end }}
   tls:
     server_name: "{{ or .NATS_SERVER_NAME `nats` }}"
     cert: "{{ or .NATS_TLS_CERT `` }}"
