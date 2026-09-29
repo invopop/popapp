@@ -8,7 +8,8 @@ The template follows a clean architecture pattern with clear separation of conce
 
 ```
 app/
-├── cmd/                    # Application entry points
+├── main.go                 # Entry point: loads config and runs the CLI
+├── app.go                  # Wires the domain and interfaces together
 ├── config/                 # Configuration files
 ├── internal/               # Private application code
 │   ├── config/            # Configuration management
@@ -36,7 +37,7 @@ Before using this template, ensure you have the following dependencies installed
 
 ### Required Dependencies
 
-1. **Go 1.25.0+**
+1. **Go 1.26.0+**
    ```bash
    # Check your Go version
    go version
@@ -83,11 +84,18 @@ cd my-new-app
 go mod edit -module github.com/yourorg/my-new-app
 
 # Download dependencies
-go get -u
 go mod tidy
 ```
 
-Remember to replace `popapp` with your app name all through the codebase, including in `config.yaml`, `mage.go`, and `Dockerfile`.
+Remember to replace `popapp` with your app name all through the codebase, including in `config.yaml`, `mage.go`, `Dockerfile`, and `.gitignore`.
+
+To upgrade dependencies later, bump the Invopop modules explicitly rather than running a blanket `go get -u`: it pulls in a `resty.dev/v3` release candidate that `client.go` does not build against. Keep resty on the version the other Invopop apps use:
+
+```bash
+go get github.com/invopop/client.go@latest github.com/invopop/popui.go@latest github.com/invopop/configure@latest
+go get resty.dev/v3@v3.0.0-beta.6
+go mod tidy
+```
 
 ### 2. Configuration
 
@@ -145,15 +153,18 @@ The template is organized to make common development tasks straightforward:
 Edit `internal/interfaces/web/web.go`:
 
 ```go
-func New(domain *domain.Setup) *Service {
+func New(ds *domain.Setup, ic *invopop.Client) *Service {
     s := new(Service)
+    s.ic = ic
+    s.domain = ds
     s.echo = echopop.NewService()
 
     s.echo.Serve(func(e *echo.Echo) {
         e.StaticFS(popui.AssetPath, popui.Assets)
+        // Add your controllers here. Routes called from the Invopop console
+        // should use the authEnrollment middleware to load the enrollment.
+        s.app = newAppController(e.Group("/app", s.authEnrollment()), s)
         e.StaticFS("/", assets.Content)
-        // Add your controllers here
-        s.register = newRegisterController(e.Group("/register"), s)
     })
 
     return s
@@ -221,11 +232,11 @@ docker run --rm --name popapp \
   --label traefik.http.routers.popapp.rule=Host\`popapp.invopop.dev\` \
   --label traefik.http.routers.popapp.tls=true \
   --expose 8080 \
-  golang:1.25.0-alpine \
+  golang:1.26.4-alpine \
   /src/popapp serve
 ```
 
-s## ⚙️ GitHub Workflows
+## ⚙️ GitHub Workflows
 
 This template includes three GitHub Actions workflows to automate testing, linting, and deployment:
 
@@ -253,6 +264,20 @@ This template includes three GitHub Actions workflows to automate testing, linti
 - Configures authentication for private dependencies
 - Runs `golangci-lint` to check code quality and style
 - Ensures code follows Go best practices
+
+### 🚀 Release Workflow (`release.yaml`)
+
+**Triggers**: Push to main and any tag
+
+**What it does**:
+- On a push to main, bumps the semver tag and pushes it
+- Builds the Docker image, passing the private-module credentials as build args
+- Tags the image with the version and `latest`, and pushes it to Artifact Registry (`europe-docker.pkg.dev/invopop/apps`)
+
+**Required Secrets**:
+- `GCP_PROJECT_ID`: Google Cloud project ID
+- `GCP_SA_KEY`: JSON service account key with push access to the registry
+- `GO_MOD_USER` / `GO_MOD_PASS`: as above, for the Docker build
 
 ## 📚 Additional Resources
 
