@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/a-h/templ v0.3.977
-	github.com/invopop/client.go v0.68.1-0.20261105153204-756b26496298
+	github.com/invopop/client.go v0.69.0
 	github.com/invopop/configure v0.8.0
 	github.com/invopop/popui.go v0.15.0
 	github.com/invopop/tasks v0.1.0

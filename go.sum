@@ -50,8 +50,8 @@ github.com/gorilla/sessions v1.4.0 h1:kpIYOp/oi6MG/p5PgxApU8srsSw9tuFbt46Lt7auzq
 github.com/gorilla/sessions v1.4.0/go.mod h1:FLWm50oby91+hl7p/wRxDth9bWSuk0qVL2emc7lT5ik=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
-github.com/invopop/client.go v0.68.1-0.20261105153204-756b26496298 h1:Sz+tA+f37i5szvnXnEs6MzEx8uPCvHBOUTg2Q3SbbkE=
-github.com/invopop/client.go v0.68.1-0.20261105153204-756b26496298/go.mod h1:T5ozG89dxaSoA/YDeMicprYVJY4cXUJet0F5OU/oD4c=
+github.com/invopop/client.go v0.69.0 h1:ZYORoPUt7nthdGmnu0nUtOI9Tf5CdAvxb5tJcgjU6io=
+github.com/invopop/client.go v0.69.0/go.mod h1:T5ozG89dxaSoA/YDeMicprYVJY4cXUJet0F5OU/oD4c=
 github.com/invopop/configure v0.8.0 h1:IZO4QsjwsmVIBgEHFzEjtpsRRnUSeKRUBGQdCpjxDek=
 github.com/invopop/configure v0.8.0/go.mod h1:O8QqC2Oyy86p73Glklvs5oQ6xQLTlSLAaFogulEGPW8=
 github.com/invopop/gobl v0.507.0 h1:vg4Ohs8LAaDC/1YN9n4xOZrmQ83T7k98aUlw8HlG4nc=
