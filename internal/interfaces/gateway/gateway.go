@@ -3,7 +3,10 @@ package gateway
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/invopop/client.go/gateway"
@@ -20,6 +23,17 @@ import (
 // Domain services may be added to the service struct.
 
 const queueTime = 24 * time.Hour //nolint:unused
+
+// ActionExample is the ID of the example action, declared to Invopop in
+// actions.go at the root of the app.
+const ActionExample = "popapp.example"
+
+// exampleConfig is the example action's step configuration, set with its
+// config panel and checked against its schema in actions/.
+type exampleConfig struct {
+	Message   string `json:"message"`
+	Uppercase bool   `json:"uppercase"`
+}
 
 // Service encapsulates the gateway functionality.
 type Service struct {
@@ -63,11 +77,29 @@ func (s *Service) execute(ctx context.Context, in *gateway.Task) *gateway.TaskRe
 	return res
 }
 
-func (s *Service) executeAction(_ context.Context, in *gateway.Task) *gateway.TaskResult { //nolint:unused
+func (s *Service) executeAction(ctx context.Context, in *gateway.Task) *gateway.TaskResult {
 	switch in.Action {
+	case ActionExample:
+		return s.handleExample(ctx, in)
 	default:
 		return gateway.TaskKO(errors.New("unknown action"))
 	}
+}
+
+// handleExample logs the message the step was configured with.
+func (s *Service) handleExample(_ context.Context, in *gateway.Task) *gateway.TaskResult {
+	conf := new(exampleConfig)
+	if err := json.Unmarshal(in.Config, conf); err != nil {
+		return gateway.TaskKO(fmt.Errorf("invalid config: %w", err))
+	}
+	msg := conf.Message
+	if conf.Uppercase {
+		msg = strings.ToUpper(msg)
+	}
+	log.Info().Str("job_id", in.JobId).Str("message", msg).Msg("gateway: example")
+	res := gateway.TaskOK()
+	res.Code = "logged"
+	return res
 }
 
 func mapDomainError(ref string, err error) *gateway.TaskResult { //nolint:unused

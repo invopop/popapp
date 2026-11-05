@@ -167,7 +167,9 @@ Edit `internal/interfaces/gateway/gateway.go`:
 ```go
 func (s *Service) executeAction(ctx context.Context, in *gateway.Task) *gateway.TaskResult {
     switch in.Action {
-    case "my_new_action":
+    case ActionExample:
+        return s.handleExample(ctx, in)
+    case "popapp.my_new_action":
         return s.handleMyNewAction(ctx, in)
     default:
         return gateway.TaskKO(errors.New("unknown action"))
@@ -175,7 +177,32 @@ func (s *Service) executeAction(ctx context.Context, in *gateway.Task) *gateway.
 }
 ```
 
-#### 3. Adding Domain Logic
+#### 3. Declaring Actions
+
+Actions are the steps the app offers to workflows. They're declared in `actions.go` and synced with Invopop's Access service each time the app starts, using the app's `invopop.client_id` and `invopop.client_secret`. Access creates new actions and updates changed ones, and the app runs on if the sync fails.
+
+```go
+func actions() *invopop.SyncActions {
+    return &invopop.SyncActions{
+        Actions: []*invopop.ActionDefinition{
+            {
+                ID:           gateway.ActionExample, // "popapp.example"
+                Name:         "Example",
+                ConfigUI:     exampleConfigUI,
+                ConfigSchema: exampleConfigSchema,
+                Schemas:      []string{"bill/invoice"},
+            },
+        },
+    }
+}
+```
+
+- **IDs** must start with the app's ID, followed by a dot.
+- **Config UI** (`actions/example.ui.json`) is a [PopUI JSON UI](https://github.com/invopop/popui.go) panel the console renders to configure steps. Its `config` data is the step's configuration, and `step.update` saves it.
+- **Config Schema** (`actions/example.schema.json`) is the JSON Schema the configuration must match. The panel checks it with the `validate` action before saving, so it only describes the data: labels and options belong in the panel.
+- **Tasks** for the action arrive at the gateway with the step's configuration in `Config` (see below).
+
+#### 4. Adding Domain Logic
 
 Create new files in `internal/domain/`:
 
@@ -190,7 +217,7 @@ func (s *MyService) DoSomething(ctx context.Context, req *MyRequest) (*MyRespons
 }
 ```
 
-#### 4. Adding Templ Components
+#### 5. Adding Templ Components
 
 Create `.templ` files in `internal/interfaces/web/components/`:
 

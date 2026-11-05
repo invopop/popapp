@@ -1,0 +1,50 @@
+{
+	"$schema": "https://assets.invopop.com/popui/v0/panel.json",
+	"data": {
+		"config": {
+			"message": "",
+			"uppercase": false
+		}
+	},
+	"handlers": {
+		"update": [
+			{
+				"action": "validate",
+				"silent": true
+			},
+			{
+				"action": "step.update",
+				"summary": "{{config.message}}"
+			}
+		]
+	},
+	"components": [
+		{
+			"is": "fieldset",
+			"on": {
+				"change": "update",
+				"input.debounce.300ms": "update"
+			},
+			"children": [
+				{
+					"is": "input",
+					"props": {
+						"name": "message",
+						"label": "Message",
+						"placeholder": "e.g. Hello from popapp"
+					},
+					"model": "config.message"
+				},
+				{
+					"is": "checkbox",
+					"props": {
+						"name": "uppercase",
+						"variant": "switch",
+						"label": "Uppercase"
+					},
+					"model": "config.uppercase"
+				}
+			]
+		}
+	]
+}
