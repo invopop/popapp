@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/invopop/client.go/invopop"
+	"github.com/invopop/client.go/pkg/access"
 	"github.com/invopop/client.go/pkg/runner"
 	"github.com/invopop/popapp/internal/config"
 	"github.com/invopop/popapp/internal/domain"
@@ -62,6 +63,16 @@ func (app *App) serve() {
 	app.web = web.New(app.domain)
 
 	run := new(runner.Group)
+
+	// Actions are synced alongside starting, as Access may not be reachable
+	// yet: tasks don't depend on it, so a failure is only logged.
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go func() {
+		if _, err := access.SyncActions(ctx, app.ic, actions()); err != nil {
+			log.Error().Err(err).Msg("syncing actions")
+		}
+	}()
 
 	run.Start(func(_ context.Context) error {
 		return app.web.Start(defaultWebPort)
