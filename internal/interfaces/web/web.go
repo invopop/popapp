@@ -3,10 +3,12 @@ package web
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/a-h/templ"
+	"github.com/invopop/client.go/invopop"
 	"github.com/invopop/client.go/pkg/echopop"
 	"github.com/invopop/popapp/internal/domain"
 	"github.com/invopop/popapp/internal/interfaces/web/assets"
@@ -23,13 +25,18 @@ import (
 
 // Service holds together the web service.
 type Service struct {
-	echo *echopop.Service
+	echo   *echopop.Service
+	ic     *invopop.Client //nolint:unused // for enrollment authentication
+	domain *domain.Setup   //nolint:unused // domain services used by controllers
 }
 
 // New instantiates a new web service.
-// The domain Setup is needed to intialize the domain services required
-func New(_ *domain.Setup) *Service {
+// The domain Setup is needed to initialize the domain services required, and
+// the Invopop client to authenticate requests from the Invopop console.
+func New(ds *domain.Setup, ic *invopop.Client) *Service {
 	s := new(Service)
+	s.ic = ic
+	s.domain = ds
 
 	s.echo = echopop.NewService()
 	s.echo.Serve(func(e *echo.Echo) {
@@ -38,6 +45,24 @@ func New(_ *domain.Setup) *Service {
 	})
 
 	return s
+}
+
+// authEnrollment returns the middleware that authenticates the enrollment from
+// the request's bearer token, loading it into the context for the handler.
+// Use it on any route group the Invopop console will call, e.g.
+// `e.Group("/app", s.authEnrollment())`.
+func (s *Service) authEnrollment() echo.MiddlewareFunc { //nolint:unused
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if err := echopop.LoadEnrollment(s.ic, c); err != nil {
+				if errors.Is(err, invopop.ErrAccessDenied) {
+					return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
+				}
+				return echo.NewHTTPError(http.StatusInternalServerError).WithInternal(err)
+			}
+			return next(c)
+		}
+	}
 }
 
 // Start the web service.

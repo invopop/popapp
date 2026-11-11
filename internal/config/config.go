@@ -16,6 +16,10 @@ type Config struct {
 	*gateway.Config
 
 	Invopop *invopop.Config `json:"invopop"`
+
+	// PublicBaseURL is the address the app is reachable at from outside,
+	// used when building links back to itself.
+	PublicBaseURL string `json:"public_base_url"`
 }
 
 // NewConfig instantiates a new configuration.

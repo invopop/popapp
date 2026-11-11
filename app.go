@@ -40,7 +40,7 @@ func New(conf *config.Config) *App {
 	)
 	app.domain = domain.New()
 	app.gw = gateway.New(app.conf.Config, app.domain)
-	app.web = web.New(app.domain)
+	app.web = web.New(app.domain, app.ic)
 	return app
 }
 
@@ -59,8 +59,6 @@ func (app *App) AddCommands(root *cobra.Command) {
 }
 
 func (app *App) serve() {
-	app.web = web.New(app.domain)
-
 	run := new(runner.Group)
 
 	run.Start(func(_ context.Context) error {

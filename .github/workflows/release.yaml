@@ -1,0 +1,119 @@
+#
+# Automatically tag a merge with master, or build a new image from the tag.
+#
+# Secrets required:
+#  * `GCP_PROJECT_ID` - Google Cloud Project ID
+#  * `GCP_SA_KEY` - JSON service account key
+#
+
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "*"
+    paths-ignore:
+      - "README.md"
+
+env:
+  REGISTRY: europe-docker.pkg.dev
+  REPO_PATH: invopop/apps
+
+# The bump step pushes the new semver tag with GITHUB_TOKEN.
+permissions:
+  contents: write
+
+# Run releases one at a time so two nearby pushes to main can't pick the
+# same next tag, or let an older build overwrite `latest`.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  tag-build-publish:
+    name: Tag, Build, Publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0" # make sure we get all commits!
+
+      - name: Get repo details
+        run: |
+          echo "COMMIT_TYPE=$(echo $GITHUB_REF | cut -d / -f 2)" >> $GITHUB_ENV
+          echo "REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d / -f 2-)" >> $GITHUB_ENV
+          echo "REPO_VERSION=$(echo $GITHUB_REF | cut -d / -f 3-)" >> $GITHUB_ENV
+
+      - name: Bump version and push tag
+        id: bump
+        if: env.COMMIT_TYPE != 'tags'
+        uses: anothrNick/github-tag-action@1.52.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_BRANCHES: main
+          WITH_V: true
+
+      # Tag-derived values are read from the shell environment rather than
+      # interpolated into the script, so a crafted tag name stays data.
+      #
+      # The tag action only sets `part` when it creates a tag. Without one
+      # (`#none` in the commit subject, or nothing new since the last tag)
+      # `new_tag` is the previous version, so skip publishing rather than
+      # overwrite that image with this commit.
+      - name: Set Version from Semver Tag
+        if: env.COMMIT_TYPE != 'tags'
+        env:
+          NEW_TAG: ${{ steps.bump.outputs.new_tag }}
+          BUMP_PART: ${{ steps.bump.outputs.part }}
+        run: |
+          if [ -z "$BUMP_PART" ]; then
+            echo "::notice::No new tag created, skipping publish"
+            echo "PUBLISH=false" >> $GITHUB_ENV
+          fi
+          echo "REPO_VERSION=$NEW_TAG" >> $GITHUB_ENV
+
+      - name: Google Auth
+        if: env.PUBLISH != 'false'
+        uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup Google Cloud CLI
+        if: env.PUBLISH != 'false'
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Configure Docker Credentials
+        if: env.PUBLISH != 'false'
+        run: |
+          gcloud auth configure-docker "$REGISTRY",us-docker.pkg.dev
+
+      - name: Build
+        if: env.PUBLISH != 'false'
+        run: |
+          docker build -t "$REPO_NAME" \
+            --build-arg GITHUB_SHA="$GITHUB_SHA" \
+            --build-arg REPO_VERSION="$REPO_VERSION" \
+            --build-arg GITHUB_REF="$GITHUB_REF" . \
+            --build-arg GITHUB_USER="${{ secrets.GO_MOD_USER }}" \
+            --build-arg GITHUB_PASS="${{ secrets.GO_MOD_PASS }}"
+
+      - name: Tag Image
+        if: env.PUBLISH != 'false'
+        run: |
+          docker image tag "$REPO_NAME" "$REGISTRY/$REPO_PATH/$REPO_NAME:$REPO_VERSION"
+
+      - name: Tag Latest Main Release
+        if: env.COMMIT_TYPE != 'tags' && env.PUBLISH != 'false'
+        run: |
+          docker image tag "$REPO_NAME" "$REGISTRY/$REPO_PATH/$REPO_NAME:${GITHUB_REF##*/}-$REPO_VERSION-$(date +'%Y%m%dT%H%M')"
+          docker image tag "$REPO_NAME" "$REGISTRY/$REPO_PATH/$REPO_NAME:latest"
+
+      - name: Publish
+        if: env.PUBLISH != 'false'
+        run: |
+          docker image push --all-tags "$REGISTRY/$REPO_PATH/$REPO_NAME"
